@@ -177,32 +177,17 @@ function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
 }
 
 function foreigndonors_civicrm_buildForm($formName, &$form) {
-  drupal_set_message($formName);
-  // Settings forms - we retrieve the relevant entity setting and we render the checkbox in the settings form
-  if ($formName == 'CRM_Contribute_Form_ContributionPage_Settings' || $formName == 'CRM_Event_Form_ManageEvent_Settings') {
-    // Retrieve current checkbox value as we render the settings form
-    if ($formName == 'CRM_Contribute_Form_ContributionPage_Settings') {
-      $result = _foreigndonors_get_setting($form, 'contribution_page');
-    }
-    if ($formName == 'CRM_Event_Form_ManageEvent_Settings') {
-      $result = _foreigndonors_get_setting($form, 'event');
-    }
-    // DEBUG: Is the checkbox ticked
-    // TODO: Remove 
-    if (!empty($result['values'][$form->get('id')])) {
-      $settings = $result['values'][$form->get('id')];
-    }
-  }
   if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
-    // Retrieve custom field ID so we can explicitly reference it
-    // Return nothing if the value is negative (ie. no custom field found)
-    $customFieldId = _foreigndonors_get_customFieldId();
-    if (!$customFieldId) {
-      return;
+    // If the form doesn't have the setting ticked, we don't need to do anything
+    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($form, 'contribution_page')) {
+        return;
     }
+    if ($formName == 'CRM_Event_Form_Registration_Register' && ! _foreigndonors_checkEnabled($form, 'event')) {
+        return;
+    }
+    drupal_set_message('The check is enabled for this form');
 
     // Add the checkbox to the public form
-    $customField = 'custom_field_' . $customFieldId;
     $form->add('advcheckbox', 'foreigndonor', ts('I affirm I am not a foreign donor'));
     $form->addRule('foreigndonor', ts('You must affirm that you are not a foreign donor'), 'required');
     $templatePath = realpath(dirname(__FILE__) . '/templates');
@@ -213,14 +198,31 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
   }
 }
 
-function _foreigndonors_get_setting($form, $type) {
+function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
+  if ($objectName == 'Contribution' && $op == 'create') {
+    // Check if the related form (event or contribution) has the foreign donor check enabled
+    watchdog('foreigndonors', 'contrib payload: %payload', array('%payload' => print_r($params, TRUE)), WATCHDOG_NOTICE);
+    $result = civicrm_api3('Contribution', 'get', array(
+      'return' => ['contribution_page_id'],
+      'id' => $id,
+    ));
+    watchdog('foreigndonors', 'API call: %id --> %result', array('%id' => $id, '%result' => print_r($result, TRUE)), WATCHDOG_NOTICE);
+  }
+}
+
+function _foreigndonors_checkEnabled($form, $type) {
+  $formId = $form->get('id');
   $result = civicrm_api3('entity_setting', 'get', array(
-    'entity_id' => $form->get('id'),
+    'entity_id' => $formId,
     'entity_type' => $type,
     'key' => 'au.org.greens.foreigndonors',
     'name' => 'foreign_donors_check',
   ));
-  return $result;
+  if (!empty($result['values'][$formId]['foreign_donors_check'])) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 function _foreigndonors_get_customFieldId() {

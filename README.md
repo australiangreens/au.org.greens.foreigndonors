@@ -43,4 +43,7 @@ Every contribution created on a form including this checkbox will include a cust
 
 ## Known Issues
 
-
+* Public form submissions failing due to unsuccessful check of ticked checkbox
+* Can't determine if contribution came from contribution page or event registration page in civicrm_post hook function
+* No test cases
+* No try/catch statements to safeguard against unexpected error
