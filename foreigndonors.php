@@ -204,7 +204,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     // Add the checkbox to the public form
     $customField = 'custom_field_' . $customFieldId;
     $form->add('advcheckbox', 'foreigndonor', ts('I affirm I am not a foreign donor'));
-    $form->addRule('foreigndonor', ts('This field is required'), 'required');
+    $form->addRule('foreigndonor', ts('You must affirm that you are not a foreign donor'), 'required');
     $templatePath = realpath(dirname(__FILE__) . '/templates');
     CRM_Core_Region::instance('page-body')->add(array(
       'template' => "{$templatePath}/foreigndonors.tpl",
@@ -232,6 +232,6 @@ function _foreigndonors_get_customFieldId() {
   if (!empty($result['values']['id'])) {
     return $result['values']['id'];
   } else {
-    return -1;
+    return 0;
   }
 }

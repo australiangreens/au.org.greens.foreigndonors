@@ -2,14 +2,14 @@
 
 ![Screenshot](/images/screenshot.png)
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+This extension adds a checkbox to CiviCRM Contribution and Event forms to enforce the affirmation of non-foreign donor status for contributors. This is required to satisfy recent changes to the Commonwealth Electoral Act (1918) regarding eligibility of donors to political parties and certain third parties in Australia.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
 * PHP v5.4+
-* CiviCRM (*FIXME: Version number*)
+* CiviCRM 4.7+
 
 ## Installation (Web UI)
 
@@ -22,7 +22,7 @@ install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
 cd <extension-dir>
-cv dl au.org.greens.foreigndonors@https://github.com/FIXME/au.org.greens.foreigndonors/archive/master.zip
+cv dl au.org.greens.foreigndonors@https://github.com/australiangreens/au.org.greens.foreigndonors/archive/master.zip
 ```
 
 ## Installation (CLI, Git)
@@ -31,14 +31,16 @@ Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) 
 install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
-git clone https://github.com/FIXME/au.org.greens.foreigndonors.git
+git clone https://github.com/australiangreens/au.org.greens.foreigndonors.git
 cv en foreigndonors
 ```
 
 ## Usage
 
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
+The extension adds checkboxes to the settings forms for contributions and events. When ticked, the public-facing forms will include a mandatory checkbox. Contributions and event registrations cannot be made until unless this checkbox is ticked.
+
+Every contribution created on a form including this checkbox will include a custom field specifying that non-foreign donor status was affirmed by the contributor.
 
 ## Known Issues
 
-(* FIXME *)
+
