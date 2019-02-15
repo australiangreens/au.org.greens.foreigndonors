@@ -178,20 +178,20 @@ function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
 
 function foreigndonors_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
+    $formId = $form->get('id');
     // If the form doesn't have the setting ticked, we don't need to do anything
-    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($form, 'contribution_page')) {
+    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($formId, 'contribution_page')) {
         return;
     }
-    if ($formName == 'CRM_Event_Form_Registration_Register' && ! _foreigndonors_checkEnabled($form, 'event')) {
+    if ($formName == 'CRM_Event_Form_Registration_Register' && ! _foreigndonors_checkEnabled($formId, 'event')) {
         return;
     }
-    drupal_set_message('The check is enabled for this form');
 
     // Add the checkbox to the public form
-    $form->add('advcheckbox', 'foreigndonor', ts('I affirm I am not a foreign donor'));
-    $form->addRule('foreigndonor', ts('You must affirm that you are not a foreign donor'), 'required');
+    $form->addElement('checkbox', 'foreigndonor', ts('I affirm I am not a foreign donor'));
+    $form->addRule('foreigndonor', ts('You must affirm you are not a foreign donor'), 'required', NULL, 'client');
     $templatePath = realpath(dirname(__FILE__) . '/templates');
-    CRM_Core_Region::instance('page-body')->add(array(
+    CRM_Core_Region::instance('billing-block-pre')->add(array(
       'template' => "{$templatePath}/foreigndonors.tpl",
     ));
     return;
@@ -207,11 +207,23 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
       'id' => $id,
     ));
     watchdog('foreigndonors', 'API call: %id --> %result', array('%id' => $id, '%result' => print_r($result, TRUE)), WATCHDOG_NOTICE);
+    $contrib_page_id = $result['values'][$id]['contribution_page_id'];
+    if (!$contrib_page_id) {
+      return;
+    }
+    if (_foreigndonors_checkEnabled($contrib_page_id, 'contribution_page')) {
+      $customField = civicrm_api3('CustomField', 'get', array(
+        'name' => 'Foreign_donor_declaration_recorded',
+      ));
+      $result = civicrm_api3('Contribution', 'create', array(
+        'id' => $id,
+        'custom_' . $customField['id'] => 1,
+      ));
+    }
   }
 }
 
-function _foreigndonors_checkEnabled($form, $type) {
-  $formId = $form->get('id');
+function _foreigndonors_checkEnabled($formId, $type) {
   $result = civicrm_api3('entity_setting', 'get', array(
     'entity_id' => $formId,
     'entity_type' => $type,
