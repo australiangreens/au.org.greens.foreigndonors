@@ -17,7 +17,7 @@ return array(
     'html_type' => 'CheckBox',
     'add' => '1.0',
     'title' => 'Foreign Donor check',
-    'description' => 'Must contributos affirm they are not foreign donors?',
+    'description' => 'Must contributors affirm they are not foreign donors?',
     'help_text' => 'If any contribution (or part thereof) against this page could be construed as a contribution to the federal party, you must enforce the Foreign Donor check', 
     'add_to_setting_form' => TRUE,
     'form_child_of_parents_parent' => 'is_confirm_enabled',
