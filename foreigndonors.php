@@ -199,19 +199,40 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
 }
 
 function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
+  $check_enabled = FALSE;
   if ($objectName == 'Contribution' && $op == 'create') {
-    // Check if the related form (event or contribution) has the foreign donor check enabled
-    watchdog('foreigndonors', 'contrib payload: %payload', array('%payload' => print_r($params, TRUE)), WATCHDOG_NOTICE);
+    // Is this Contribution linked to a Contribution Page?
     $result = civicrm_api3('Contribution', 'get', array(
       'return' => ['contribution_page_id'],
       'id' => $id,
     ));
-    watchdog('foreigndonors', 'API call: %id --> %result', array('%id' => $id, '%result' => print_r($result, TRUE)), WATCHDOG_NOTICE);
     $contrib_page_id = $result['values'][$id]['contribution_page_id'];
-    if (!$contrib_page_id) {
-      return;
+    if ($contrib_page_id) {
+      if (_foreigndonors_checkEnabled($contrib_page_id, 'contribution_page')) {
+        $check_enabled = TRUE;
+      }
+    } else {
+      // Is this Contribution linked to an Event registration?
+      // Look for a participant ID linked to the contribution
+      $result = civicrm_api3('ParticipantPayment', 'get', [
+        'return' => ["participant_id"],
+        'contribution_id.id' => $id,
+      ]);
+      if (!empty($result['values'])) {
+        // If there is a participant ID, now we get the linked event ID
+        $result = civicrm_api3('ParticipantPayment', 'get', [
+          'return' => ["participant_id.event_id.id"],
+          'participant_id' => $result['values'][$id]['participant_id'],
+        ]);
+        $event_id = $result['values'][$result['values'][$id]['participant_id']]['participant_id.event_id.id'];
+        // Now check if event has foreign donor check set
+        if (_foreigndonors_checkEnabled($event_id, 'event_fee')) {
+          $check_enabled = TRUE;
+        }
+      }
     }
-    if (_foreigndonors_checkEnabled($contrib_page_id, 'contribution_page')) {
+    // Finally, if need be, update the Contribution record
+    if ($check_enabled) {
       $customField = civicrm_api3('CustomField', 'get', array(
         'name' => 'Foreign_donor_declaration_recorded',
       ));
