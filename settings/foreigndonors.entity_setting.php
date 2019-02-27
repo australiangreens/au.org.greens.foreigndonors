@@ -24,7 +24,7 @@ return array(
   ),
   array(
     'key' => 'au.org.greens.foreigndonors',
-    'entity' => 'event',
+    'entity' => 'event_fee',
     'name' => 'foreign_donors_check',
     'type' => 'CheckBox',
     'html_type' => 'CheckBox',
@@ -33,7 +33,6 @@ return array(
     'description' => 'Must participants affirm they are not foreign donors?',
     'help_text' => 'If any payment (or part thereof) for this event could be construed as a contribution to the federal party, you must enforce the Foreign Donor check',
     'add_to_setting_form' => TRUE,
-    'form_child_of_parents_parent' => 'is_confirm_enabled',
+    'form_child_of_parents_parent' => 'fee_label',
   ),
-
 );
