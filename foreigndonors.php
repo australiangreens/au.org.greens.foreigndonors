@@ -191,7 +191,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     $form->addElement('checkbox', 'foreigndonor', ts('I affirm I am not a foreign donor'));
     $form->addRule('foreigndonor', ts('You must affirm you are not a foreign donor'), 'required', NULL, 'client');
     $templatePath = realpath(dirname(__FILE__) . '/templates');
-    CRM_Core_Region::instance('billing-block-pre')->add(array(
+    CRM_Core_Region::instance('form-bottom')->add(array(
       'template' => "{$templatePath}/foreigndonors.tpl",
     ));
     return;
