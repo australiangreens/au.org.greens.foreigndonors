@@ -199,48 +199,62 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
 }
 
 function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
+  $entity_id = $id;
   $check_enabled = FALSE;
+  $contribution_id = 0;
+  // Check for Contribution generated through Contribution Page
   if ($objectName == 'Contribution' && $op == 'create') {
-    // Is this Contribution linked to a Contribution Page?
+    $contribution_id = $entity_id;
     $result = civicrm_api3('Contribution', 'get', array(
       'return' => ['contribution_page_id'],
-      'id' => $id,
+      'id' => $entity_id,
     ));
-    $contrib_page_id = $result['values'][$id]['contribution_page_id'];
-    if ($contrib_page_id) {
+    watchdog('foreign', 'contrib: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
+    $contrib_page_id = $result['values'][$entity_id]['contribution_page_id'];
+    if (!empty($contrib_page_id)) {
       if (_foreigndonors_checkEnabled($contrib_page_id, 'contribution_page')) {
         $check_enabled = TRUE;
       }
-    } else {
-      // Is this Contribution linked to an Event registration?
-      // Look for a participant ID linked to the contribution
+    }
+  } elseif ($objectName == 'ParticipantPayment' && $op == 'create') {
+    // Check for a Contribution generated through an event registration payment
+    // Get the participant ID linked to the payment
+    watchdog('foreign', 'entity: %id', array('%id'=>$entity_id), WATCHDOG_DEBUG);
+    $result = civicrm_api3('ParticipantPayment', 'get', [
+      'return' => ['participant_id'],
+      'id' => $entity_id,
+    ]);
+    watchdog('foreign', 'partpay: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
+    // Get the event ID linked to the participant ID
+    $participant_id = $result['values'][$id]['participant_id'];
+    $result = civicrm_api3('Participant', 'get', [
+      'return' => ['event_id'],
+      'id' => $participant_id,
+    ]);
+    watchdog('foreign', 'part: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
+    $event_id = $result['values'][$participant_id]['event_id'];
+    // Now check if event has foreign donor check set
+    if (_foreigndonors_checkEnabled($event_id, 'event_fee')) {
+      $check_enabled = TRUE;
+      // Get the contribution ID linked to the payment
       $result = civicrm_api3('ParticipantPayment', 'get', [
-        'return' => ["participant_id"],
-        'contribution_id.id' => $id,
+        'return' => ['contribution_id'],
+        'id' => $entity_id,
       ]);
-      if (!empty($result['values'])) {
-        // If there is a participant ID, now we get the linked event ID
-        $result = civicrm_api3('ParticipantPayment', 'get', [
-          'return' => ["participant_id.event_id.id"],
-          'participant_id' => $result['values'][$id]['participant_id'],
-        ]);
-        $event_id = $result['values'][$result['values'][$id]['participant_id']]['participant_id.event_id.id'];
-        // Now check if event has foreign donor check set
-        if (_foreigndonors_checkEnabled($event_id, 'event_fee')) {
-          $check_enabled = TRUE;
-        }
-      }
+      watchdog('foreign', 'getcontrib: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
+      $contribution_id = $result['values']['contribution_id'];
     }
-    // Finally, if need be, update the Contribution record
-    if ($check_enabled) {
-      $customField = civicrm_api3('CustomField', 'get', array(
-        'name' => 'Foreign_donor_declaration_recorded',
-      ));
-      $result = civicrm_api3('Contribution', 'create', array(
-        'id' => $id,
-        'custom_' . $customField['id'] => 1,
-      ));
-    }
+  }
+  // Finally, if need be, update the Contribution record
+  // to record foreign donor check
+  if ($check_enabled) {
+    $customField = civicrm_api3('CustomField', 'get', array(
+      'name' => 'Foreign_donor_declaration_recorded',
+    ));
+    $result = civicrm_api3('Contribution', 'create', array(
+      'id' => $contribution_id,
+      'custom_' . $customField['id'] => 1,
+    ));
   }
 }
 
