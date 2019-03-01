@@ -1,0 +1,10 @@
+{
+     "name": "australian_greens/au.org.greens.foreigndonors",
+     "type": "drupal-module",
+     "description": "Australian Greens Exension for recording foreign donor compliance",
+     "require": {
+       "composer/installers": "~1.0",
+       "drupal/drupal": "~7"
+     }
+
+}
