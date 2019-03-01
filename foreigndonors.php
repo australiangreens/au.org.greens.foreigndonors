@@ -179,6 +179,7 @@ function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
 function foreigndonors_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
     $formId = $form->get('id');
+
     // If the form doesn't have the setting ticked, we don't need to do anything
     if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($formId, 'contribution_page')) {
         return;
@@ -202,49 +203,55 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
   $entity_id = $id;
   $check_enabled = FALSE;
   $contribution_id = 0;
+
   // Check for Contribution generated through Contribution Page
+
   if ($objectName == 'Contribution' && $op == 'create') {
-    $contribution_id = $entity_id;
     $result = civicrm_api3('Contribution', 'get', array(
       'return' => ['contribution_page_id'],
       'id' => $entity_id,
     ));
-    watchdog('foreign', 'contrib: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
     $contrib_page_id = $result['values'][$entity_id]['contribution_page_id'];
     if (!empty($contrib_page_id)) {
       if (_foreigndonors_checkEnabled($contrib_page_id, 'contribution_page')) {
         $check_enabled = TRUE;
+        $contribution_id = $entity_id;
       }
     }
   } elseif ($objectName == 'ParticipantPayment' && $op == 'create') {
+
     // Check for a Contribution generated through an event registration payment
+
+    // Workaround for Civi core bug (see #13739)
+    $entity_id = $params->id;
+
     // Get the participant ID linked to the payment
-    watchdog('foreign', 'entity: %id', array('%id'=>$entity_id), WATCHDOG_DEBUG);
     $result = civicrm_api3('ParticipantPayment', 'get', [
       'return' => ['participant_id'],
       'id' => $entity_id,
     ]);
-    watchdog('foreign', 'partpay: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
+
     // Get the event ID linked to the participant ID
-    $participant_id = $result['values'][$id]['participant_id'];
+    $participant_id = $result['values'][$entity_id]['participant_id'];
     $result = civicrm_api3('Participant', 'get', [
       'return' => ['event_id'],
       'id' => $participant_id,
     ]);
-    watchdog('foreign', 'part: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
     $event_id = $result['values'][$participant_id]['event_id'];
+
     // Now check if event has foreign donor check set
     if (_foreigndonors_checkEnabled($event_id, 'event_fee')) {
       $check_enabled = TRUE;
+
       // Get the contribution ID linked to the payment
       $result = civicrm_api3('ParticipantPayment', 'get', [
         'return' => ['contribution_id'],
         'id' => $entity_id,
       ]);
-      watchdog('foreign', 'getcontrib: %result', array('%result' => print_r($result,TRUE)), WATCHDOG_DEBUG);
-      $contribution_id = $result['values']['contribution_id'];
+      $contribution_id = $result['values'][$entity_id]['contribution_id'];
     }
   }
+
   // Finally, if need be, update the Contribution record
   // to record foreign donor check
   if ($check_enabled) {
