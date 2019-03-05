@@ -177,14 +177,11 @@ function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
 }
 
 function foreigndonors_civicrm_buildForm($formName, &$form) {
-  if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
+  if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
     $formId = $form->get('id');
 
     // If the form doesn't have the setting ticked, we don't need to do anything
     if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($formId, 'contribution_page')) {
-        return;
-    }
-    if ($formName == 'CRM_Event_Form_Registration_Register' && ! _foreigndonors_checkEnabled($formId, 'event_fee')) {
         return;
     }
 
@@ -217,38 +214,6 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
         $check_enabled = TRUE;
         $contribution_id = $entity_id;
       }
-    }
-  } elseif ($objectName == 'ParticipantPayment' && $op == 'create') {
-
-    // Check for a Contribution generated through an event registration payment
-
-    // Workaround for Civi core bug (see #13739)
-    $entity_id = $params->id;
-
-    // Get the participant ID linked to the payment
-    $result = civicrm_api3('ParticipantPayment', 'get', [
-      'return' => ['participant_id'],
-      'id' => $entity_id,
-    ]);
-
-    // Get the event ID linked to the participant ID
-    $participant_id = $result['values'][$entity_id]['participant_id'];
-    $result = civicrm_api3('Participant', 'get', [
-      'return' => ['event_id'],
-      'id' => $participant_id,
-    ]);
-    $event_id = $result['values'][$participant_id]['event_id'];
-
-    // Now check if event has foreign donor check set
-    if (_foreigndonors_checkEnabled($event_id, 'event_fee')) {
-      $check_enabled = TRUE;
-
-      // Get the contribution ID linked to the payment
-      $result = civicrm_api3('ParticipantPayment', 'get', [
-        'return' => ['contribution_id'],
-        'id' => $entity_id,
-      ]);
-      $contribution_id = $result['values'][$entity_id]['contribution_id'];
     }
   }
 
