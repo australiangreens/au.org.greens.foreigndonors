@@ -20,6 +20,9 @@
   <compatibility>
     <ver>4.7</ver>
   </compatibility>
+  <requires>
+    <ext>nz.co.fuzion.entitysetting</ext>
+  </requires>
   <comments>This is a new extension</comments>
   <civix>
     <namespace>CRM/Foreigndonors</namespace>

@@ -134,34 +134,6 @@ function foreigndonors_civicrm_entityTypes(&$entityTypes) {
   _foreigndonors_civix_civicrm_entityTypes($entityTypes);
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function foreigndonors_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
-function foreigndonors_civicrm_navigationMenu(&$menu) {
-  _foreigndonors_civix_insert_navigation_menu($menu, 'Mailings', array(
-    'label' => E::ts('New subliminal message'),
-    'name' => 'mailing_subliminal_message',
-    'url' => 'civicrm/mailing/subliminal',
-    'permission' => 'access CiviMail',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _foreigndonors_civix_navigationMenu($menu);
-} // */
-
 function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
   static $configured = FALSE;
   if ($configured) {
@@ -181,8 +153,8 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     $formId = $form->get('id');
 
     // If the form doesn't have the setting ticked, we don't need to do anything
-    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($formId, 'contribution_page')) {
-        return;
+    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && !_foreigndonors_checkEnabled($formId, 'contribution_page')) {
+      return;
     }
 
     // Add the checkbox to the public form
@@ -193,6 +165,12 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       'template' => "{$templatePath}/foreigndonors.tpl",
     ));
     return;
+  }
+  if ($formName == 'CRM_Contribute_Form_ContributionPage_Settings') {
+    $action = $form->getVar('_action');
+    if ($action == CRM_Core_Action::ADD) {
+      $form->setDefaults(['au-org-greens-foreigndonors__foreign_donors_check' => 1]);
+    }
   }
 }
 
@@ -239,7 +217,8 @@ function _foreigndonors_checkEnabled($formId, $type) {
   ));
   if (!empty($result['values'][$formId]['foreign_donors_check'])) {
     return 1;
-  } else {
+  }
+  else {
     return 0;
   }
 }
@@ -252,7 +231,8 @@ function _foreigndonors_get_customFieldId() {
 
   if (!empty($result['values']['id'])) {
     return $result['values']['id'];
-  } else {
+  }
+  else {
     return 0;
   }
 }
