@@ -180,6 +180,10 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
     $formId = $form->get('id');
 
+    // Get domain ID
+    // Necessary to modify text for QLD domain
+    $domainId = CRM_Core_Config::domainID();
+
     // If the form doesn't have the setting ticked, we don't need to do anything
     if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($formId, 'contribution_page')) {
         return;
@@ -188,9 +192,18 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
         return;
     }
 
+    $form->assign('domainId', $domainId);
+
     // Add the checkbox to the public form
-    $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
-    $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
+    // Have to use different language for Queensland
+    if ($domainId = 7) {
+      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
+      $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
+    }
+    else {
+      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
+      $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
+    }
     $templatePath = realpath(dirname(__FILE__) . '/templates');
     CRM_Core_Region::instance('form-bottom')->add(array(
       'template' => "{$templatePath}/foreigndonors.tpl",
