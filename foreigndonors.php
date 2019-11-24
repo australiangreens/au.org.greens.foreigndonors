@@ -196,8 +196,12 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
 
     // Add the checkbox to the public form
     // Have to use different language for Queensland
-    if ($domainId = 7) {
+    if ($domainId == 7) {
       $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
+      $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
+    }
+    elseif ($domainId == 8) {
+      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a prohibited donor as per NSW Electoral Legislation'));
       $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
     }
     else {
