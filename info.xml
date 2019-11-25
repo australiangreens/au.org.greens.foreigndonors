@@ -18,7 +18,8 @@
   <version>0.3</version>
   <develStage>alpha</develStage>
   <compatibility>
-    <ver>5.195.195.195.195.19ompatibility>
+    <ver>5.19</ver>
+  </compatibility>
   <comments>This is a new, undeveloped module</comments>
   <civix>
     <namespace>CRM/Foreigndonors</namespace>
