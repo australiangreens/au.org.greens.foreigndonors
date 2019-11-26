@@ -177,7 +177,6 @@ function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
 }
 
 function foreigndonors_civicrm_buildForm($formName, &$form) {
-  drupal_set_message(json_encode($formName));
   if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
     $formId = $form->get('id');
 
@@ -198,22 +197,26 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     // Add the checkbox to the public form
     // Have to use different language for Queensland
     if ($domainId == 7) {
+      $label = "I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor";
       $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
     }
     elseif ($domainId == 8) {
-      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a prohibited donor as per NSW Electoral Legislation'));
-      $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
+      $label = "I am an Australian Citizen or Permanent Resident, and not a prohibited donor as per NSW Electoral Legislation";
+      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
+      $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
+      $form->addElement('checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per NSW Electoral Legislation'));
+      $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per NSW Electoral legislation'), 'required', NULL, 'client');
     }
     else {
+      $label = "I am an Australian Citizen or Permanent Resident";
       $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
     }
     $templatePath = realpath(dirname(__FILE__) . '/templates');
-    if ($formName === 'CRM_Event_Form_Registration_Register') {
-      CRM_Core_Region::instance('billing-block-post')->add(array(
-        'template' => "{$templatePath}/foreigndonors.tpl",
-      ));
+    if ($formName == 'CRM_Event_Form_Registration_Register') {
+      CRM_Core_Resources::singleton()->addScriptFile('au.org.greens.foreigndonors', 'js/event-form.js');
+      CRM_Core_Resources::singleton()->addVars('foreigndonors', ['label' => $label, 'domainId' => $domainId]);
     }
     else {
       CRM_Core_Region::instance('form-bottom')->add(array(
@@ -283,10 +286,15 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
     $customField = civicrm_api3('CustomField', 'get', array(
       'name' => 'Foreign_donor_declaration_recorded',
     ));
-    $result = civicrm_api3('Contribution', 'create', array(
+    $params = [
       'id' => $contribution_id,
       'custom_' . $customField['id'] => 1,
-    ));
+    ];
+    // If we are in NSW also set the Prohibited Donor field.
+    if (CRM_Core_Config::domainID() == 8) {
+      $params['custom_430'] = 'No';
+    }
+    $result = civicrm_api3('Contribution', 'create', $params);
   }
 }
 
