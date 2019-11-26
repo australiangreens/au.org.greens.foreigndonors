@@ -177,6 +177,7 @@ function foreigndonors_civicrm_alterEntitySettingsFolders(&$folders) {
 }
 
 function foreigndonors_civicrm_buildForm($formName, &$form) {
+  drupal_set_message(json_encode($formName));
   if ($formName == 'CRM_Contribute_Form_Contribution_Main' || $formName == 'CRM_Event_Form_Registration_Register') {
     $formId = $form->get('id');
 
@@ -209,9 +210,16 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
     }
     $templatePath = realpath(dirname(__FILE__) . '/templates');
-    CRM_Core_Region::instance('form-bottom')->add(array(
-      'template' => "{$templatePath}/foreigndonors.tpl",
-    ));
+    if ($formName === 'CRM_Event_Form_Registration_Register') {
+      CRM_Core_Region::instance('billing-block-post')->add(array(
+        'template' => "{$templatePath}/foreigndonors.tpl",
+      ));
+    }
+    else {
+      CRM_Core_Region::instance('form-bottom')->add(array(
+        'template' => "{$templatePath}/foreigndonors.tpl",
+      ));
+    }
     return;
   }
 }
