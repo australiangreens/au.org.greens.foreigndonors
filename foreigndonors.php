@@ -286,17 +286,28 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
     $customField = civicrm_api3('CustomField', 'get', array(
       'name' => 'Foreign_donor_declaration_recorded',
     ));
-    $params = [
+    $result = civicrm_api3('Contribution', 'create', [
       'id' => $contribution_id,
       'custom_' . $customField['id'] => 1,
-    ];
+    ]);
     // If we are in NSW also set the Prohibited Donor field.
     $domainId = CRM_Core_Config::domainID();
     if ($domainId == 8) {
-      $params['custom_430'] = 'No';
+      if (CRM_Core_Transaction::isActive()) {
+        CRM_Core_Transaction::addCallback(CRM_Core_Transaction::PHASE_POST_COMMIT, '_foreigndonors_nsw_prohibited_donor_update', [$contribution_id]);
+      }
+      else {
+        _foreigndonors_nsw_prohibited_donor_update($contribution_id);
+      }
     }
-    $result = civicrm_api3('Contribution', 'create', $params);
   }
+}
+
+function _foreigndonors_nsw_prohibited_donor_update($contribution_id) {
+  civicrm_api3('Contribution', 'create', [
+    'id' => $contribution_id,
+    'custom_430' => 'No',
+  ]);
 }
 
 function _foreigndonors_checkEnabled($formId, $type) {
