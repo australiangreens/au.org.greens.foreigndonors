@@ -291,7 +291,8 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
       'custom_' . $customField['id'] => 1,
     ];
     // If we are in NSW also set the Prohibited Donor field.
-    if (CRM_Core_Config::domainID() == 8) {
+    $domainId = CRM_Core_Config::domainID();
+    if ($domainId == 8) {
       $params['custom_430'] = 'No';
     }
     $result = civicrm_api3('Contribution', 'create', $params);
