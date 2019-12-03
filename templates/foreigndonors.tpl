@@ -26,17 +26,18 @@
       <li>(3) liquor or gambling industry business entity - I am not:
         <ul><li>(a) a corporation that is mainly concerned and has the ultimate purpose of making a profit from:
           <ul><li>(i) the manufacture or sale of liquour products;</li>
-          <li>(ii) wagering, betting or other gambling (including the manufacture of machines used primarily for this purpose); or</li></ul></li></ul>
-        </li>
-        <li>(b) a close associate of a corporation set out in (a) in this paragraph. Close associate of an individual or corporation means I am not:
-          <ul><li>(a) director or officer of the corporation or the spouse of such a director or officer,</li>
-            <li>(b) a related body corporate of the corporation,</li>
-            <li>(c) a person whose voting power in the corporation or a related body corporate of the corporation is greater than 20%, or the spouse of such a person,</li>
-            <li>(d) a corporation or a related body corporate of the corporation that is a stapled entity, the other stapled entity in relation to that stapled security,</li>
-            <li>(e) a person who holds more than 20% of the units in the trust of a unit trust if the corporation is a trustee, manager or responsible entity of a trust or a beneficiary of this trust,</li>
-            <li>(f) individually a person, or a corporation, that is a property developer in a joint venture or partnership with a property developer in connection with a relevant planning application made by, or on behalf of the property developer who is likely to obtain a financial gain if the development would be, or is authorised by an approved planning application or is carried out.</li>
-            <li>(g) a spouse of the individual.</li>
-          </ul>
+            <li>(ii) wagering, betting or other gambling (including the manufacture of machines used primarily for this purpose); or</li></ul>
+          </li>
+          <li>(b) a close associate of a corporation set out in (a) in this paragraph. Close associate of an individual or corporation means I am not:
+            <ul><li>(a) director or officer of the corporation or the spouse of such a director or officer,</li>
+              <li>(b) a related body corporate of the corporation,</li>
+              <li>(c) a person whose voting power in the corporation or a related body corporate of the corporation is greater than 20%, or the spouse of such a person,</li>
+              <li>(d) a corporation or a related body corporate of the corporation that is a stapled entity, the other stapled entity in relation to that stapled security,</li>
+              <li>(e) a person who holds more than 20% of the units in the trust of a unit trust if the corporation is a trustee, manager or responsible entity of a trust or a beneficiary of this trust,</li>
+              <li>(f) individually a person, or a corporation, that is a property developer in a joint venture or partnership with a property developer in connection with a relevant planning application made by, or on behalf of the property developer who is likely to obtain a financial gain if the development would be, or is authorised by an approved planning application or is carried out.</li>
+              <li>(g) a spouse of the individual.</li>
+            </ul>
+           </li></ul>
         </li></ul>
   </div>
 {/if}
