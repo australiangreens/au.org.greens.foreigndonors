@@ -1,16 +1,19 @@
 {* template block that contains the foreign donor affirmation field *}
-<div id="foreigndonor-section">
-  <div>{$form.foreigndonor.html} {$form.foreigndonor|@json_encode}hi</div>
-{if $domainId eq '7'}
-  <div>I am an Australian Citizen or Permanent Resident, and not a prohibited donor as per Queensland legislation</div>
-{else}
-  <div>I am an Australian Citizen or Permanent Resident</div>
-{/if}
+<div id="crm-section foreigndonor-section">
+  <div class="label">
+    {if $domainId eq '7'}
+       I am an Australian Citizen or Permanent Resident, and not a prohibited donor as per Queensland legislation</div>
+    {else}
+       I am an Australian Citizen or Permanent Resident</div>
+    {/if}
+  <div class="content">
+  {$form.foreigndonor.html} {$form.foreigndonor|@json_encode}hi</div>
 </div>
 {if $domainId eq '8'}
-  <div id="prohibiteddonor-section">
-    <div>{$form.prohibiteddonor.html}</div>
-    <div>I am not a prohibited donor as per NSW Electoral Funding Act 2018</div>
+  <div id="crm-section prohibiteddonor-section">
+    <div class="content">
+    {$form.prohibiteddonor.html}
+    <p>I am not a prohibited donor as per NSW Electoral Funding Act 2018</p>
     <p>Under the NSW Electoral Funding Act it is an offence for any political party to take donations from a prohibited donor and parties have to pay hefty fines and/or people can be imprisioned if they take donations from prohibited donors.</p>
     <p>I confirm that I am not a prohibited donor engaged in property development, a tobacco business entity or a liquour or gambling business entity:</p>
     <ul><li>1. property developer - I am not an individual or corporation:
@@ -41,6 +44,7 @@
         <li>(f) individually a person, or a corporation, that is a property developer in a joint venture or partnership with a property developer in connection with a relevant planning application made by, or on behalf of the property developer who is likely to obtain a financial gain if the development would be, or is authorised by an approved planning application or is carried out.</li>
         <li>(g) a spouse of the individual.</li>
       </ul>
+    </div>
   </div>
 {/if}
 {* reposition block after #otherBlock *}

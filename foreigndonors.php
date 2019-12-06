@@ -198,19 +198,19 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     // Have to use different language for Queensland
     if ($domainId == 7) {
       $label = "I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor";
-      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
+      $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
     }
     elseif ($domainId == 8) {
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
-      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
+      $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
-      $form->addElement('checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per NSW Electoral Legislation'));
+      $form->add('Checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per NSW Electoral Legislation'));
       $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per NSW Electoral legislation'), 'required', NULL, 'client');
     }
     else {
       $label = "I am an Australian Citizen or Permanent Resident";
-      $form->addElement('checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
+      $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
     }
     $templatePath = realpath(dirname(__FILE__) . '/templates');
