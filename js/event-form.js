@@ -12,9 +12,4 @@
       paymentFieldsDiv.append(prohibitedDonor);
     }
   });
-  var paymentFieldsDiv = $('#payment_information');
-  paymentFieldsDiv.append(foreignDonorCheckbox);
-  if (prohibitedDonor) {
-    paymentFieldsDiv.append(prohibitedDonor);
-  }
 })(CRM.$);
