@@ -1,5 +1,5 @@
 {* template block that contains the foreign donor affirmation field *}
-<div id="foreigndonor">
+<div id="foreigndonor-section">
   <div>{$form.foreigndonor.html} hi</div>
 {if $domainId eq '7'}
   <div>I am an Australian Citizen or Permanent Resident, and not a prohibited donor as per Queensland legislation</div>
@@ -8,7 +8,7 @@
 {/if}
 </div>
 {if $domainId eq '8'}
-  <div id="prohibiteddonor">
+  <div id="prohibiteddonor-section">
     <div>{$form.prohibiteddonor.html}</div>
     <div>I am not a prohibited donor as per NSW Electoral Funding Act 2018</div>
     <p>Under the NSW Electoral Funding Act it is an offence for any political party to take donations from a prohibited donor and parties have to pay hefty fines and/or people can be imprisioned if they take donations from prohibited donors.</p>
