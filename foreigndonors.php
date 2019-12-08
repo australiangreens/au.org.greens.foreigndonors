@@ -193,6 +193,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     }
 
     $form->assign('domainId', $domainId);
+    $form->assign('foreignPageId', $formId);
 
     // Add the checkbox to the public form
     // Have to use different language for Queensland
