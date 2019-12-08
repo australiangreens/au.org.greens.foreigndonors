@@ -216,8 +216,12 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     $templatePath = realpath(dirname(__FILE__) . '/templates');
     if ($formName == 'CRM_Event_Form_Registration_Register') {
       CRM_Core_Resources::singleton()->addScriptFile('au.org.greens.foreigndonors', 'js/event-form.js');
-      CRM_Core_Resources::singleton()->addVars('foreigndonors', ['label' => $label, 'domainId' => $domainId]);
     }
+    else {
+      CRM_Core_Resources::singleton()->addScriptFIle('au.org.greens.foreigndonors', 'js/contrib-form.js');
+    }
+    CRM_Core_Resources::singleton()->addVars('foreigndonors', ['label' => $label, 'domainId' => $domainId]);
+    CRM_Core_Resources::singleton()->addScriptFile('au.org.greens.foreigndonors', 'js/help_text.js');
     CRM_Core_Region::instance('form-bottom')->add(array(
       'template' => "{$templatePath}/foreigndonors.tpl",
     ));
