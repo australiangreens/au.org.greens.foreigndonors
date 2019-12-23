@@ -293,6 +293,7 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
       'id' => $contribution_id,
       'custom_' . $customField['id'] => 1,
     ]);
+    Civi::log()->debug('CiviCRM API result {api_result}', ['api_result' => $result]);
   }
 }
 
