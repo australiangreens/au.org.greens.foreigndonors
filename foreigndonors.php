@@ -293,12 +293,6 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
       'id' => $contribution_id,
       'custom_' . $customField['id'] => 1,
     ]);
-    Civi::log()-debug('Custom field found {customfield}', ['customfield' => 'custom_' . $customField['id']]);
-    $getResult = civicrm_api3('Contribution', 'get', [
-     'id' => $contribution_id,
-     'return' => ['custom_' . $customField['id']],
-    ]);
-    Civi::log()->debug('get result {getResult}', ['getResult' => $getResult]);
   }
 }
 
