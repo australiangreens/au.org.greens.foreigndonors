@@ -4,6 +4,7 @@
      if (CRM.vars.foreigndonors.domainId == 7) {
        fdHelpText = "<p>The Queensland <em>Electoral Act 1992</em> and <em>Local Government Electoral Act 2011</em> regulate political donations by minimising risk of corruption through the prohibition of certain donors. Property Developers and their associates for example are prohibited donors under these acts.</p>" + fdHelpText;
      }
+     CRM.$.ui.tooltip({ content: fdHelpText, items: "i#foreigndonor-help", tooltipClass: "uitooltip" }, $('i#foreigndonor-help'));
      $("<style type='text/css'> .uitooltip { font-size: 0.75em; max-width: 300px;} </style>").appendTo("head");
      if ($('.prohibiteddonor-section').length) {
        $("<style type='text/css'> .uitooltip-prohibited { font-size: 0.75em; max-width: 600px;} </style>").appendTo("head");
