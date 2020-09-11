@@ -1,6 +1,6 @@
 {* template block that contains the foreign donor affirmation field *}
 <div class="crm-section foreigndonor-section">
-  {if $foreignPageId eq '17' || $foreignPageId eq '2502'}
+  {if $foreignPageId eq '2857' || $foreignPageId eq '2879' || foreignPageId eq '2880'}
     <div class="content description">
       <h3>Information required for legislative compliance (non citizens/residents may still apply but must ring the office to do so (07) 3357 8458)</h3>
     </div>
