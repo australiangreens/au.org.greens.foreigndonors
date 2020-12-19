@@ -249,7 +249,8 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
         $contribution_id = $entity_id;
       }
     }
-  } elseif ($objectName == 'ParticipantPayment' && $op == 'create') {
+  }
+  elseif ($objectName == 'ParticipantPayment' && $op == 'create') {
 
     // Check for a Contribution generated through an event registration payment
 
@@ -286,13 +287,19 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
   // Finally, if need be, update the Contribution record
   // to record foreign donor check
   if ($check_enabled) {
-    $customField = civicrm_api3('CustomField', 'get', array(
-      'name' => 'Foreign_donor_declaration_recorded',
-    ));
-    $result = civicrm_api3('Contribution', 'create', [
+    $customFieldId = _foreigndonors_get_customFieldId();
+    $params = [
       'id' => $contribution_id,
-      'custom_' . $customField['id'] => 1,
-    ]);
+      'custom_' . $customFieldId => 1,
+    ];
+    $domainId = CRM_Core_Config::domainID();
+    if ($domainId == 8) {
+      $prohibitedCustomFieldId = _foreigndonors_get_prohibited_donor_customFieldId();
+      if (!empty($prohibitedCustomFieldId)) {
+        $params['custom_' . $prohibitedCustomFieldId] = 1;
+      }
+    }
+    $result = civicrm_api3('Contribution', 'create', $params);
   }
 }
 
@@ -305,7 +312,8 @@ function _foreigndonors_checkEnabled($formId, $type) {
   ));
   if (!empty($result['values'][$formId]['foreign_donors_check'])) {
     return 1;
-  } else {
+  }
+  else {
     return 0;
   }
 }
@@ -318,7 +326,21 @@ function _foreigndonors_get_customFieldId() {
 
   if (!empty($result['values']['id'])) {
     return $result['values']['id'];
-  } else {
+  }
+  else {
+    return 0;
+  }
+}
+
+function _foreigndonors_get_prohibited_donor_customFieldId() {
+  $result = civicrm_api3('CustomFIeld', 'get', [
+    'return' => ['id'],
+    'name'  => 'Are_you_a_prohibited_donor_',
+  ]);
+  if (!empty($result['values']['id'])) {
+    return $result['values']['id'];
+  }
+  else {
     return 0;
   }
 }
