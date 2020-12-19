@@ -185,11 +185,11 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     $domainId = CRM_Core_Config::domainID();
 
     // If the form doesn't have the setting ticked, we don't need to do anything
-    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && ! _foreigndonors_checkEnabled($formId, 'contribution_page')) {
-        return;
+    if ($formName == 'CRM_Contribute_Form_Contribution_Main' && !_foreigndonors_checkEnabled($formId, 'contribution_page')) {
+      return;
     }
-    if ($formName == 'CRM_Event_Form_Registration_Register' && ! _foreigndonors_checkEnabled($formId, 'event_fee')) {
-        return;
+    if ($formName == 'CRM_Event_Form_Registration_Register' && !_foreigndonors_checkEnabled($formId, 'event_fee')) {
+      return;
     }
 
     $form->assign('domainId', $domainId);
@@ -284,23 +284,36 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
     }
   }
 
+  if ($check_enabled) {
+    if (CRM_Core_Transaction::isActive()) {
+      CRM_Core_Transaction::addCallback(CRM_Core_Transaction::PHASE_POST_COMMIT, 'foreigndonors_record_submission', [$contribution_id]);
+    }
+    else {
+      foreigndonors_record_submission($contribution_id);
+    }
+  }
+}
+
+/**
+ * Record that the end user has ticketed the foreign donor check box and or the prohibited donor checkbox
+ * @param int $contribution_id
+ */
+function foreigndonors_record_submission($contribution_id) {
   // Finally, if need be, update the Contribution record
   // to record foreign donor check
-  if ($check_enabled) {
-    $customFieldId = _foreigndonors_get_customFieldId();
-    $params = [
-      'id' => $contribution_id,
-      'custom_' . $customFieldId => 1,
-    ];
-    $domainId = CRM_Core_Config::domainID();
-    if ($domainId == 8) {
-      $prohibitedCustomFieldId = _foreigndonors_get_prohibited_donor_customFieldId();
-      if (!empty($prohibitedCustomFieldId)) {
-        $params['custom_' . $prohibitedCustomFieldId] = 1;
-      }
+  $customFieldId = _foreigndonors_get_customFieldId();
+  $params = [
+    'id' => $contribution_id,
+    'custom_' . $customFieldId => 1,
+  ];
+  $domainId = CRM_Core_Config::domainID();
+  if ($domainId == 8) {
+    $prohibitedCustomFieldId = _foreigndonors_get_prohibited_donor_customFieldId();
+    if (!empty($prohibitedCustomFieldId)) {
+      $params['custom_' . $prohibitedCustomFieldId] = 'No';
     }
-    $result = civicrm_api3('Contribution', 'create', $params);
   }
+  $result = civicrm_api3('Contribution', 'create', $params);
 }
 
 function _foreigndonors_checkEnabled($formId, $type) {
@@ -320,12 +333,10 @@ function _foreigndonors_checkEnabled($formId, $type) {
 
 function _foreigndonors_get_customFieldId() {
   $result = civicrm_api3('CustomField', 'get', array(
-    'return' => 'id',
-    'name' => 'Foreign_Donor_declaration_recorded',
+    'name' => 'Foreign_donor_declaration_recorded',
   ));
-
-  if (!empty($result['values']['id'])) {
-    return $result['values']['id'];
+  if (!empty($result['id'])) {
+    return $result['id'];
   }
   else {
     return 0;
@@ -333,12 +344,11 @@ function _foreigndonors_get_customFieldId() {
 }
 
 function _foreigndonors_get_prohibited_donor_customFieldId() {
-  $result = civicrm_api3('CustomFIeld', 'get', [
-    'return' => ['id'],
+  $result = civicrm_api3('CustomField', 'get', [
     'name'  => 'Are_you_a_prohibited_donor_',
   ]);
-  if (!empty($result['values']['id'])) {
-    return $result['values']['id'];
+  if (!empty($result['id'])) {
+    return $result['id'];
   }
   else {
     return 0;
