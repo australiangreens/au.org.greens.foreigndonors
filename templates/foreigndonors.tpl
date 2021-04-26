@@ -20,7 +20,8 @@
   </div>
   <div class="content">{$form.foreigndonor.html}</div>
 </div>
-{if $domainId eq '8'}
+{* inject prohibited donor checkbox for NSW domain and NSW fin type forms *}
+{if $addProhibitedDonor}
   <div class="crm-section prohibiteddonor-section">
     <div class="label">
       <label for="prohibiteddonor">I am not a prohibited donor <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true"></i></label>

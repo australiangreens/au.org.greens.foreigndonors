@@ -182,6 +182,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
 
     // Get domain ID
     // Necessary to modify text for QLD domain
+    // and add prohibited checkbox for NSW domain
     $domainId = CRM_Core_Config::domainID();
 
     // If the form doesn't have the setting ticked, we don't need to do anything
@@ -195,14 +196,36 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     $form->assign('domainId', $domainId);
     $form->assign('foreignPageId', $formId);
 
+    // As a safeguard against people completing NSW contrib forms through the wrong domain
+    // We're going to get the financial type of the page/event and if it starts with 'NSW'
+    // we know to inject the prohibited donor checkbox, regardless of domain
+    $finType = [];
+    if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
+      $finType = \Civi\Api4\ContributionPage::get(FALSE)
+        ->addSelect('financial_type_id:label')
+        ->addWhere('id', '=', $formId)
+        ->setLimit(1)
+        ->execute();
+    }
+    else {
+      $finType = \Civi\Api4\Event::get()
+        ->addSelect('financial_type_id:label')
+        ->addWhere('id', '=', $formId)
+        ->setLimit(1)
+        ->execute();
+    }
+
     // Add the checkbox to the public form
     // Have to use different language for Queensland
+    // Inject a prohibited donor checkbox for NSW
+    // if the domain is NSW or the fin type starts with 'NSW'
     if ($domainId == 7) {
       $label = "I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
     }
-    elseif ($domainId == 8) {
+    elseif ($domainId == 8 || substr($finType[0]['financial_type_id:label'], 0, 3) === 'NSW') {
+      $form->assign('addProhibitedDonor', TRUE);
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
@@ -210,6 +233,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per NSW Electoral legislation'), 'required', NULL, 'client');
     }
     else {
+      $form->assign('addProhibitedDonor', FALSE);
       $label = "I am an Australian Citizen or Permanent Resident";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
@@ -307,7 +331,12 @@ function foreigndonors_record_submission($contribution_id) {
     'custom_' . $customFieldId => 1,
   ];
   $domainId = CRM_Core_Config::domainID();
-  if ($domainId == 8) {
+  $finType = \Civi\Api4\Contribution::get(FALSE)
+    ->addSelect('financial_type_id:label')
+    ->addWhere('id', '=', $contribution_id)
+    ->setLimit(1)
+    ->execute();
+  if ($domainId == 8 || substr($finType[0]['financial_type_id:label'], 0, 3) === 'NSW') {
     $prohibitedCustomFieldId = _foreigndonors_get_prohibited_donor_customFieldId();
     if (!empty($prohibitedCustomFieldId)) {
       $params['custom_' . $prohibitedCustomFieldId] = 'No';
