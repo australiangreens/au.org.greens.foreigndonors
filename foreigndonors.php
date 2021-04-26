@@ -215,16 +215,18 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
         ->execute();
     }
 
+    $isNSW = substr($finType[0]['financial_type_id:label'], 0, 3) === 'NSW';
+
     // Add the checkbox to the public form
     // Have to use different language for Queensland
     // Inject a prohibited donor checkbox for NSW
     // if the domain is NSW or the fin type starts with 'NSW'
-    if ($domainId == 7) {
+    if ($domainId == 7 && !$isNSW) {
       $label = "I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident, and not a QLD prohibited donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
     }
-    elseif ($domainId == 8 || substr($finType[0]['financial_type_id:label'], 0, 3) === 'NSW') {
+    elseif ($domainId == 8 || $isNSW ) {
       $form->assign('addProhibitedDonor', TRUE);
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
