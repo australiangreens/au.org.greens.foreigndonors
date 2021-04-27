@@ -1,5 +1,5 @@
 Package: au.org.greens.foreigndonors
-Copyright (C) 2019, FIXME <FIXME>
+Copyright (C) 2021, Australian Greens
 Licensed under the GNU Affero Public License 3.0 (below).
 
 -------------------------------------------------------------------------------
