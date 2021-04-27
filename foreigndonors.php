@@ -208,7 +208,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
         ->execute();
     }
     else {
-      $finType = \Civi\Api4\Event::get()
+      $finType = \Civi\Api4\Event::get(FALSE)
         ->addSelect('financial_type_id:label')
         ->addWhere('id', '=', $formId)
         ->setLimit(1)
