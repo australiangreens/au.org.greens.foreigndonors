@@ -192,6 +192,9 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
     if ($formName == 'CRM_Event_Form_Registration_Register' && !_foreigndonors_checkEnabled($formId, 'event_fee')) {
       return;
     }
+    if ($formName == 'CRM_Event_Form_Registration_Register' && !$form->_values['event']['is_monetary']) {
+      return;
+    }
 
     $form->assign('domainId', $domainId);
     $form->assign('foreignPageId', $formId);
