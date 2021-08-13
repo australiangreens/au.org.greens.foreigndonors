@@ -234,16 +234,16 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
-      $form->add('Checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per NSW Electoral Legislation'));
-      $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per NSW Electoral legislation'), 'required', NULL, 'client');
+      $form->add('Checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per NSW electoral legislation'));
+      $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per NSW electoral legislation'), 'required', NULL, 'client');
     }
     elseif ($domainId == 9 || $isACT ) {
       $form->assign('addACTProhibitedDonor', TRUE);
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
-      $form->add('Checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per ACT Electoral Legislation'));
-      $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per ACT Electoral legislation'), 'required', NULL, 'client');
+      $form->add('Checkbox', 'prohibiteddonor', ts('I am not a prohibited donor as per ACT electoral legislation'));
+      $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per ACT electoral legislation'), 'required', NULL, 'client');
     }
     else {
       $form->assign('addProhibitedDonor', FALSE);
