@@ -21,13 +21,23 @@
   <div class="content">{$form.foreigndonor.html}</div>
 </div>
 {* inject prohibited donor checkbox for NSW domain and NSW fin type forms *}
-{if $addProhibitedDonor}
-  <div class="crm-section prohibiteddonor-section">
+{if $addNSWProhibitedDonor}
+  <div class="crm-section prohibiteddonor-section nsw-prohibited-donor">
     <div class="label">
       <label for="prohibiteddonor">I am not a prohibited donor <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true"></i></label>
     </div>
     <div class="content">
     {$form.prohibiteddonor.html}</div>
   </div>
+{else}
+  {if $addACTProhibitedDonor}
+    <div class="crm-section prohibiteddonor-section act-prohibited-donor">
+      <div class="label">
+        <label for="prohibiteddonor">I am not a prohibited donor <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true"></i></label>
+      </div>
+      <div class="content">
+      {$form.prohibiteddonor.html}</div>
+    </div>
+  {/if}
 {/if}
 {* reposition block after #otherBlock *}

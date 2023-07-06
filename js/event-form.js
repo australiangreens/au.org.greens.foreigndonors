@@ -15,7 +15,7 @@
     var prohibitedDonor = false;
     var billingSection = $('.layout-billing');
     billingSection.append(foreignDonor);
-    if (CRM.vars.foreigndonors.domainId == 8) {
+    if (CRM.vars.foreigndonors.domainId == 8 || CRM.vars.foreigndonors.domainId == 9) {
       prohibitedDonor = $('.prohibiteddonor-section');
       billingSection.append(prohibitedDonor);
     }
