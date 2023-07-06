@@ -16,5 +16,5 @@
         CRM.$.ui.tooltip({ content: pdHelpText, items: "i#prohibiteddonor-help", tooltipClass: "uitooltip-prohibited" }, $('i#prohibiteddonor-help'));
     }
   });
-})(jQuery);
+})(CRM.$);
 
