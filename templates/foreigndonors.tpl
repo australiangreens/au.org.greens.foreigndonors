@@ -15,8 +15,8 @@
             and am not a foreign donor
          {/if}
       {/if}
-      <i id="foreigndonor-help" class="fa fa-question-circle" aria-hidden="true"></i>
     </label>
+    <i id="foreigndonor-help" class="fa fa-question-circle" aria-hidden="true" onclick="foreignDonorClicked()"></i>
   </div>
   <div class="content">{$form.foreigndonor.html}</div>
 </div>
@@ -24,7 +24,8 @@
 {if $addNSWProhibitedDonor}
   <div class="crm-section prohibiteddonor-section nsw-prohibited-donor">
     <div class="label">
-      <label for="prohibiteddonor">I am not a prohibited donor <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true"></i></label>
+      <label for="prohibiteddonor">I am not a prohibited donor</label>
+      <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true" onclick="prohibitedDonorNSWClicked()"></i>
     </div>
     <div class="content">
     {$form.prohibiteddonor.html}</div>
@@ -33,7 +34,8 @@
   {if $addACTProhibitedDonor}
     <div class="crm-section prohibiteddonor-section act-prohibited-donor">
       <div class="label">
-        <label for="prohibiteddonor">I am not a prohibited donor <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true"></i></label>
+        <label for="prohibiteddonor">I am not a prohibited donor</label>
+        <i id="prohibiteddonor-help" class="fa fa-question-circle" aria-hidden="true" onclick="prohibitedDonorACTClicked()"></i>
       </div>
       <div class="content">
       {$form.prohibiteddonor.html}</div>
@@ -41,3 +43,21 @@
   {/if}
 {/if}
 {* reposition block after #otherBlock *}
+
+<div class="modal fade" id="foreigndonor-help-modal" tabindex="-1" role="dialog" aria-labelledby="foreigndonor-help-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="foreigndonor-help-title">Definitions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="foreigndonor-help-modal-body" class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
