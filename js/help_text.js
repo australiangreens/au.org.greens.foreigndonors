@@ -21,4 +21,5 @@ function prohibitedDonorACTClicked() {
 
 (function($) {
   $(document.body).append(CRM.$('#foreigndonor-help-modal'));
+  CRM.loadScript(CRM.vars.foreigndonors.boostrapjs);
 })(CRM.$);
