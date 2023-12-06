@@ -267,7 +267,7 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
   }
 }
 
-function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
+function foreigndonors_civicrm_postCommit($op, $objectName, $id, &$params) {
   $entity_id = $id;
   $check_enabled = FALSE;
   $contribution_id = 0;
@@ -322,12 +322,7 @@ function foreigndonors_civicrm_post($op, $objectName, $id, &$params) {
   }
 
   if ($check_enabled) {
-    if (CRM_Core_Transaction::isActive()) {
-      CRM_Core_Transaction::addCallback(CRM_Core_Transaction::PHASE_POST_COMMIT, 'foreigndonors_record_submission', [$contribution_id]);
-    }
-    else {
-      foreigndonors_record_submission($contribution_id);
-    }
+    foreigndonors_record_submission($contribution_id);
   }
 }
 
