@@ -115,6 +115,8 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
 
     $isNSW = substr($finType[0]['financial_type_id:label'], 0, 3) === 'NSW';
     $isACT = substr($finType[0]['financial_type_id:label'], 0, 3) === 'ACT';
+    $form->assign('addNSWProhibitedDonor', $isNSW);
+    $form->assign('addACTProhibitedDonor', $isACT);
 
     // Add the checkbox to the public form
     // Have to use different language for Queensland
@@ -125,7 +127,6 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       $form->addRule('foreigndonor', ts('You must affirm you are not a prohibited donor as per State and Federal legislation'), 'required', NULL, 'client');
     }
     elseif ($domainId == 8 || $isNSW ) {
-      $form->assign('addNSWProhibitedDonor', TRUE);
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
@@ -133,7 +134,6 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per NSW electoral legislation'), 'required', NULL, 'client');
     }
     elseif ($domainId == 9 || $isACT ) {
-      $form->assign('addACTProhibitedDonor', TRUE);
       $label = "I am an Australian Citizen or Permanent Resident and am not a foreign donor";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident and am not a foreign donor'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
@@ -141,7 +141,6 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
       $form->addRule('prohibiteddonor', ts('You must affirm you are not a prohibited donor as per ACT electoral legislation'), 'required', NULL, 'client');
     }
     else {
-      $form->assign('addProhibitedDonor', FALSE);
       $label = "I am an Australian Citizen or Permanent Resident";
       $form->add('Checkbox', 'foreigndonor', ts('I am an Australian Citizen or Permanent Resident'));
       $form->addRule('foreigndonor', ts('You must affirm you are an Australian Citizen or Permanent Resident'), 'required', NULL, 'client');
