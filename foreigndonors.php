@@ -115,8 +115,8 @@ function foreigndonors_civicrm_buildForm($formName, &$form) {
 
     $isNSW = substr($finType[0]['financial_type_id:label'], 0, 3) === 'NSW';
     $isACT = substr($finType[0]['financial_type_id:label'], 0, 3) === 'ACT';
-    $form->assign('addNSWProhibitedDonor', $isNSW);
-    $form->assign('addACTProhibitedDonor', $isACT);
+    $form->assign('addNSWProhibitedDonor', $isNSW || $domainId == 8);
+    $form->assign('addACTProhibitedDonor', $isACT || $domainId == 9);
 
     // Add the checkbox to the public form
     // Have to use different language for Queensland
